@@ -1,0 +1,29 @@
+# PowerMind — Forecast plugin configuration
+# =============================================================================
+# The ForecasterRegistry reads this file at startup to select the default
+# forecaster.  Plugins are installed at runtime; they only need to be
+# registered once via registry.register().
+# =============================================================================
+
+# Default forecaster used by tools/predict_price.py when no explicit
+# forecaster_id is specified in the call context.
+default_forecaster: "demo_lstm"
+
+# Available forecasters registered in the system.
+# Only plugins listed here with status "active" are loaded at startup.
+forecasters:
+  demo_lstm:
+    plugin_class: "quant.plugins.lstm_plugin.DemoLSTMForecaster"
+    version: "1.0.0"
+    status: "active"           # active | deprecated | disabled
+    description: "Demo LSTM forecaster — suitable for development and evaluation only."
+    max_horizon_hours: 24
+    supports_provinces: ["山东", "河南"]
+
+  company_adapter:
+    plugin_class: "quant.plugins.company_adapter.CompanyForecasterAdapter"
+    version: "0.1.0"
+    status: "placeholder"      # not yet implemented — V1 task
+    description: "Placeholder for the company's production forecasting algorithm."
+    max_horizon_hours: 72
+    supports_provinces: []      # fill when the adapter is implemented

@@ -1,0 +1,53 @@
+# 河南电力市场配置
+province:
+  name: 河南
+  code: henan
+  region: 华中
+  market_stage: SPOT
+
+spot_market:
+  price_cap: 1500
+  price_floor: 0
+  settlement_cap: 1500
+  settlement_floor: 0
+  bidding_deadline: "10:30"
+  nodes: ["豫中东", "豫南", "豫西", "豫北"]  # 河南4节点
+
+deviation:
+  free_range: 5.0
+  penalty_multiplier: 2.0
+  exemption_reasons:
+    - 电网故障
+    - 极端天气预警
+    - 政府指令性限电
+
+tou:
+  segments:
+    - name: 尖峰
+      hours: ["10:00-12:00", "18:00-20:00"]
+      multiplier: 1.8
+    - name: 高峰
+      hours: ["08:00-10:00", "12:00-18:00", "20:00-22:00"]
+      multiplier: 1.5
+    - name: 平段
+      hours: ["06:00-08:00", "22:00-24:00"]
+      multiplier: 1.0
+    - name: 低谷
+      hours: ["00:00-06:00"]
+      multiplier: 0.5
+
+energy_mix:
+  thermal: 72.0
+  wind: 10.0
+  solar: 8.0
+  nuclear: 0.0
+  hydro: 5.0
+  other: 5.0
+
+transmission:
+  - 哈密南-郑州(±800kV) 新疆电力
+  - 长治-南阳-荆门(特高压) 华中联网
+
+data_sources:
+  - name: 河南电力交易中心
+    url: https://pmos.sgcc.com.cn

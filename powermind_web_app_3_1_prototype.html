@@ -1,0 +1,1299 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PowerMind Agent</title>
+  <style>
+    :root {
+      --bg: #f7f7f3;
+      --side: #eef3f6;
+      --panel: #fff;
+      --text: #171a18;
+      --muted: #7c827d;
+      --line: #dedfd8;
+      --line2: #c9cbc4;
+      --soft: #f6f7f4;
+      --green: #e7f6eb;
+      --green-text: #14733d;
+      --orange: #fff3e8;
+      --orange-text: #e65300;
+      --red: #fff0ef;
+      --red-text: #b3261e;
+      --shadow: 0 16px 42px rgba(23, 26, 24, .08);
+      font-family: "Microsoft YaHei", "PingFang SC", "Segoe UI", Arial, sans-serif;
+      color-scheme: light;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    button, textarea, select, input { font: inherit; }
+
+    button {
+      min-height: 36px;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      padding: 0 12px;
+      background: transparent;
+      color: inherit;
+      cursor: pointer;
+    }
+
+    button:hover { background: rgba(23, 26, 24, .06); }
+    button:disabled { opacity: .55; cursor: not-allowed; }
+
+    input, textarea, select {
+      outline: 0;
+      color: var(--text);
+    }
+
+    input {
+      height: 38px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 0 11px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 96px;
+      max-height: 190px;
+      resize: vertical;
+      border: 0;
+      padding: 16px 18px 8px;
+      line-height: 1.55;
+      background: transparent;
+    }
+
+    select {
+      height: 32px;
+      border: 0;
+      border-radius: 8px;
+      background: transparent;
+    }
+
+    h1, h2, h3, p { margin-top: 0; letter-spacing: 0; }
+    h1 { font-size: 25px; line-height: 1.25; margin-bottom: 0; }
+    h2 { font-size: 18px; margin-bottom: 6px; }
+    h3 { font-size: 14px; margin-bottom: 8px; }
+    p { color: var(--muted); line-height: 1.7; }
+
+    .hidden { display: none !important; }
+
+    .auth {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+
+    .auth-card {
+      width: min(880px, 100%);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .auth-panel {
+      min-height: 438px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fff;
+      box-shadow: var(--shadow);
+      padding: 22px;
+      display: grid;
+      align-content: start;
+      gap: 12px;
+    }
+
+    .field {
+      display: grid;
+      gap: 6px;
+    }
+
+    .field label {
+      color: #3b413d;
+      font-size: 13px;
+    }
+
+    .form-note {
+      min-height: 22px;
+      margin: 0;
+      color: var(--red-text);
+      font-size: 13px;
+    }
+
+    .form-note.ok { color: var(--green-text); }
+
+    .app {
+      height: 100vh;
+      min-height: 680px;
+      display: grid;
+      grid-template-columns: 300px minmax(0, 1fr);
+      overflow: hidden;
+    }
+
+    .sidebar {
+      min-height: 0;
+      display: grid;
+      grid-template-rows: auto auto 1fr auto auto;
+      gap: 12px;
+      padding: 12px;
+      background: var(--side);
+      border-right: 1px solid var(--line);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 4px;
+    }
+
+    .mark, .avatar {
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      font-weight: 800;
+      flex: 0 0 auto;
+    }
+
+    .mark {
+      width: 32px;
+      height: 32px;
+      background: var(--text);
+      color: #fff;
+    }
+
+    .brand strong, .account strong { display: block; font-size: 14px; }
+    .brand span, .account span { display: block; color: var(--muted); font-size: 12px; margin-top: 2px; }
+
+    .primary {
+      width: 100%;
+      background: var(--text);
+      border-color: var(--text);
+      color: #fff;
+    }
+
+    .primary:hover { background: #2d312d; }
+
+    .thread-list {
+      min-height: 0;
+      overflow: auto;
+      display: grid;
+      align-content: start;
+      gap: 4px;
+    }
+
+    .section-label {
+      color: var(--muted);
+      font-size: 12px;
+      padding: 10px 8px 4px;
+    }
+
+    .thread {
+      width: 100%;
+      min-height: 48px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 8px;
+      align-items: center;
+      text-align: left;
+      padding: 8px 10px;
+    }
+
+    .thread.active {
+      background: rgba(255, 255, 255, .78);
+      border-color: var(--line);
+      box-shadow: 0 1px 2px rgba(23, 26, 24, .04);
+    }
+
+    .thread strong {
+      display: block;
+      font-size: 13px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .thread span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 3px;
+    }
+
+    .side-actions {
+      border-top: 1px solid rgba(23, 26, 24, .08);
+      padding-top: 10px;
+      display: grid;
+      gap: 6px;
+    }
+
+    .side-actions button {
+      width: 100%;
+      text-align: left;
+      display: flex;
+      justify-content: space-between;
+      color: #303530;
+    }
+
+    .side-actions button.active {
+      background: rgba(255, 255, 255, .76);
+      border-color: var(--line);
+    }
+
+    .account {
+      min-height: 62px;
+      border-top: 1px solid rgba(23, 26, 24, .08);
+      padding: 10px 4px 0;
+      display: grid;
+      grid-template-columns: 38px minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .account .avatar {
+      width: 34px;
+      height: 34px;
+      background: #9eaa79;
+      color: #fff;
+      font-size: 12px;
+    }
+
+    .account-actions {
+      display: flex;
+      gap: 4px;
+    }
+
+    .account-actions button {
+      min-height: 28px;
+      padding: 0 8px;
+      color: var(--muted);
+    }
+
+    .main {
+      min-width: 0;
+      min-height: 0;
+      display: grid;
+      grid-template-rows: 54px 1fr;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 0 18px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(247, 247, 243, .92);
+      backdrop-filter: blur(14px);
+    }
+
+    .crumb {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .crumb b {
+      color: var(--text);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .pill {
+      min-height: 24px;
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 0 9px;
+      background: #fff;
+      color: #353a36;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .pill.ok { background: var(--green); color: var(--green-text); border-color: #c7e8d0; }
+    .pill.hot { background: var(--orange); color: var(--orange-text); border-color: #f0c7a5; }
+    .pill.bad { background: var(--red); color: var(--red-text); border-color: #efbab5; }
+
+    .view {
+      min-width: 0;
+      min-height: 0;
+      display: none;
+    }
+
+    .view.active { display: grid; }
+
+    .agent-view {
+      grid-template-rows: 1fr auto;
+    }
+
+    .chat-scroll {
+      min-height: 0;
+      overflow: auto;
+      padding: 42px 22px 22px;
+    }
+
+    .chat {
+      width: min(900px, 100%);
+      min-height: 100%;
+      margin: 0 auto;
+      display: grid;
+      align-content: start;
+      gap: 22px;
+    }
+
+    .empty {
+      justify-self: center;
+      width: min(620px, 100%);
+      text-align: center;
+      padding-top: 18vh;
+    }
+
+    .message {
+      display: grid;
+      grid-template-columns: 34px minmax(0, 1fr);
+      gap: 12px;
+      align-items: start;
+    }
+
+    .msg-icon {
+      width: 30px;
+      height: 30px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .message.user .msg-icon {
+      background: var(--text);
+      border-color: var(--text);
+      color: #fff;
+    }
+
+    .bubble {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 14px;
+      line-height: 1.7;
+      box-shadow: 0 1px 2px rgba(23, 26, 24, .035);
+    }
+
+    .bubble.plain {
+      border-color: transparent;
+      background: transparent;
+      box-shadow: none;
+      padding: 2px 0;
+    }
+
+    .bubble ul { margin: 8px 0 0 20px; padding: 0; }
+
+    .timeline {
+      position: relative;
+      display: grid;
+      gap: 0;
+      padding-left: 2px;
+    }
+
+    .timeline::before {
+      content: "";
+      position: absolute;
+      left: 13px;
+      top: 20px;
+      bottom: 20px;
+      width: 1px;
+      background: var(--line);
+    }
+
+    .step {
+      position: relative;
+      display: grid;
+      grid-template-columns: 28px minmax(0, 1fr);
+      gap: 10px;
+      padding: 9px 0;
+    }
+
+    .step-dot {
+      z-index: 1;
+      width: 26px;
+      height: 26px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line2);
+      border-radius: 50%;
+      background: var(--bg);
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .step.done .step-dot {
+      background: #fff;
+      color: var(--green-text);
+      border-color: var(--green-text);
+    }
+
+    .step b { display: block; font-size: 14px; margin-bottom: 3px; }
+    .step span { display: block; color: var(--muted); font-size: 13px; line-height: 1.55; }
+
+    .source-card {
+      margin-top: 9px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      overflow: hidden;
+    }
+
+    .source-head {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 10px;
+      color: var(--muted);
+      font-size: 12px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .source-row {
+      display: grid;
+      grid-template-columns: 18px minmax(0, 1fr) auto;
+      gap: 8px;
+      padding: 8px 10px;
+      color: #3c423e;
+      font-size: 13px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .source-row:last-child { border-bottom: 0; }
+    .source-row i { width: 16px; height: 16px; border-radius: 4px; background: #f04b36; color: #fff; font-style: normal; font-size: 10px; display: grid; place-items: center; }
+    .source-row span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .source-row em { color: var(--muted); font-style: normal; }
+
+    .composer-wrap {
+      padding: 12px 22px 22px;
+      background: linear-gradient(180deg, rgba(247, 247, 243, 0), var(--bg) 24%);
+    }
+
+    .composer {
+      width: min(900px, 100%);
+      margin: 0 auto;
+      border: 1px solid var(--line2);
+      border-radius: 18px;
+      background: #fff;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .file-chip {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      min-height: 34px;
+      padding: 0 12px 8px;
+      color: var(--muted);
+      font-size: 13px;
+      flex-wrap: wrap;
+    }
+
+    .file-chip.show { display: flex; }
+    .file-chip b { color: var(--text); }
+    .file-chip button { min-height: 28px; padding: 0 8px; }
+
+    .composer-bottom {
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 8px 10px 10px;
+      flex-wrap: wrap;
+    }
+
+    .tool-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .icon-btn {
+      width: 34px;
+      min-width: 34px;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      color: var(--muted);
+      font-size: 24px;
+    }
+
+    .permission-btn {
+      color: var(--orange-text);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .permission-btn::before {
+      content: "!";
+      width: 18px;
+      height: 18px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--orange-text);
+      border-radius: 50%;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .model-inline {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      color: #343834;
+    }
+
+    .mic {
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    .send {
+      width: 42px;
+      min-width: 42px;
+      height: 42px;
+      min-height: 42px;
+      border-radius: 50%;
+      background: var(--text);
+      border-color: var(--text);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-size: 20px;
+      padding: 0;
+    }
+
+    .send:hover { background: #2b302c; }
+
+    .page-view {
+      overflow: auto;
+      padding: 28px;
+    }
+
+    .page-inner {
+      width: min(1080px, 100%);
+      margin: 0 auto;
+      display: grid;
+      gap: 16px;
+    }
+
+    .page-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 16px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .toolbar select, .toolbar input {
+      border: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .list { display: grid; gap: 8px; }
+
+    .row {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(110px, .6fr) auto;
+      gap: 14px;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 14px;
+    }
+
+    .row strong {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      margin-bottom: 4px;
+    }
+
+    .row span, .metric span { color: var(--muted); font-size: 13px; }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .metric {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 14px;
+    }
+
+    .metric b {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 24px;
+    }
+
+    .permission-pop {
+      position: fixed;
+      left: 312px;
+      bottom: 78px;
+      z-index: 10;
+      width: 366px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fff;
+      box-shadow: var(--shadow);
+      padding: 12px;
+    }
+
+    .permission-pop header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+
+    .perm-option {
+      width: 100%;
+      min-height: 62px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 8px;
+      align-items: center;
+      text-align: left;
+      padding: 9px 10px;
+    }
+
+    .perm-option.active { background: var(--soft); }
+    .perm-option strong { display: block; margin-bottom: 3px; font-size: 14px; }
+    .perm-option span { color: var(--muted); font-size: 12px; line-height: 1.45; }
+
+    @media (max-width: 920px) {
+      .auth-card, .app { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .topbar { height: auto; padding: 10px; align-items: flex-start; flex-direction: column; }
+      .metric-grid, .row { grid-template-columns: 1fr; }
+      .page-view { padding: 16px; }
+      .permission-pop { left: 10px; right: 10px; width: auto; }
+    }
+  </style>
+</head>
+<body>
+  <section id="authView" class="auth">
+    <div class="auth-card">
+      <form id="loginForm" class="auth-panel">
+        <div class="brand">
+          <div class="mark">PM</div>
+          <div>
+            <strong>PowerMind</strong>
+            <span>登录后进入 Agent 工作台</span>
+          </div>
+        </div>
+        <h1>登录</h1>
+        <div class="field">
+          <label for="loginAccount">账号</label>
+          <input id="loginAccount" autocomplete="username" value="trader@powermind.cn">
+        </div>
+        <div class="field">
+          <label for="loginPassword">密码</label>
+          <input id="loginPassword" type="password" autocomplete="current-password" value="powermind">
+        </div>
+        <button class="primary" type="submit">进入工作台</button>
+        <p id="loginMessage" class="form-note" aria-live="polite"></p>
+      </form>
+
+      <form id="applyForm" class="auth-panel">
+        <h1>账号申请</h1>
+        <div class="field">
+          <label for="applyName">姓名</label>
+          <input id="applyName" required>
+        </div>
+        <div class="field">
+          <label for="applyContact">联系方式</label>
+          <input id="applyContact" required>
+        </div>
+        <div class="field">
+          <label for="applyOrg">组织</label>
+          <input id="applyOrg" required>
+        </div>
+        <div class="field">
+          <label for="applyReason">申请说明</label>
+          <input id="applyReason" required>
+        </div>
+        <button type="submit">提交申请</button>
+        <p id="applyMessage" class="form-note" aria-live="polite"></p>
+      </form>
+    </div>
+  </section>
+
+  <div id="appView" class="app hidden">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="mark">PM</div>
+        <div>
+          <strong>PowerMind</strong>
+          <span>Agent Workspace</span>
+        </div>
+      </div>
+
+      <button id="newTask" class="primary" type="button">新对话</button>
+
+      <div id="threadList" class="thread-list" aria-label="会话列表"></div>
+
+      <div class="side-actions">
+        <button class="side-link" type="button" data-view="history">历史任务 <span>›</span></button>
+        <button class="side-link" type="button" data-view="usage">Token 用量 <span>›</span></button>
+      </div>
+
+      <div class="account">
+        <div class="avatar">WH</div>
+        <div>
+          <strong id="accountName">whisper</strong>
+          <span id="accountEmail">trader@powermind.cn</span>
+        </div>
+        <div class="account-actions">
+          <button id="logoutButton" type="button">退出</button>
+          <button id="applyShortcut" type="button">申请</button>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="crumb"><span>PowerMind</span><span>/</span><b id="viewTitle">新任务</b></div>
+      </header>
+
+      <section id="agentView" class="view agent-view active">
+        <div class="chat-scroll">
+          <div class="chat">
+            <div id="emptyState" class="empty">
+              <h1>开始一个 PowerMind 任务</h1>
+            </div>
+            <div id="messages"></div>
+          </div>
+        </div>
+
+        <form id="composer" class="composer-wrap">
+          <div class="composer">
+            <textarea id="prompt" placeholder="描述你的任务，例如：分析山东明天日前报价建议，并说明依据"></textarea>
+            <div id="fileChip" class="file-chip">
+              <b id="fileChipName"></b>
+              <span id="fileChipMeta"></span>
+              <button id="removeFile" type="button">删除</button>
+              <button id="retryFile" class="hidden" type="button">重传</button>
+              <button id="continueNoFile" class="hidden" type="button">继续无文件任务</button>
+            </div>
+            <div class="composer-bottom">
+              <div class="tool-group">
+                <input id="fileInput" class="hidden" type="file">
+                <button id="pickFile" class="icon-btn" type="button" title="上传文件">+</button>
+                <button id="permissionButton" class="permission-btn" type="button">完全访问</button>
+              </div>
+              <div class="tool-group">
+                <label class="model-inline">
+                  <select id="modelSelect" title="模型切换">
+                    <option value="deepseek-v4">DeepSeek V4</option>
+                    <option value="kimi-k2">Kimi K2</option>
+                    <option value="doubao-pro">Doubao Pro</option>
+                    <option value="qwen-max">Qwen Max</option>
+                    <option value="gpt-5">GPT-5</option>
+                  </select>
+                </label>
+                <button id="send" class="send" type="submit" title="发送">↑</button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </section>
+
+      <section id="historyView" class="view page-view">
+        <div class="page-inner">
+          <div class="page-head">
+            <div>
+              <h1>历史任务</h1>
+              <p>只展示当前账号有权限查看的任务。</p>
+            </div>
+            <div class="toolbar">
+              <input id="dateFilter" type="date">
+              <select id="statusFilter">
+                <option value="">全部状态</option>
+                <option>已完成</option>
+                <option>等待补充</option>
+                <option>失败</option>
+              </select>
+              <select id="sceneFilter">
+                <option value="">全部场景</option>
+                <option>政策查询</option>
+                <option>市场日报</option>
+                <option>报价建议</option>
+              </select>
+            </div>
+          </div>
+          <div id="historyRows" class="list"></div>
+        </div>
+      </section>
+
+      <section id="usageView" class="view page-view">
+        <div class="page-inner">
+          <div class="page-head">
+            <div>
+              <h1>Token 用量</h1>
+              <p>按日期、任务和 Agent 统计；资料检索、Query 调度器和 EvidencePipeline 不作为 Agent 统计。</p>
+            </div>
+            <div class="toolbar">
+              <input id="usageDate" type="date">
+              <select id="usageScope">
+                <option>当前任务</option>
+                <option>今日汇总</option>
+                <option>本月汇总</option>
+                <option>用户维度统计</option>
+              </select>
+            </div>
+          </div>
+          <div class="metric-grid">
+            <div class="metric"><b id="totalTokens">0</b><span>Agent Token</span></div>
+            <div class="metric"><b id="modelName">DeepSeek V4</b><span>当前模型</span></div>
+            <div class="metric"><b id="agentCount">7</b><span>本轮 Agent</span></div>
+            <div class="metric"><b id="toolCount">3</b><span>资料/工具调用</span></div>
+          </div>
+          <div id="usageRows" class="list"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="permissionPop" class="permission-pop hidden">
+    <header>
+      <span>如何批准 PowerMind 操作？</span>
+      <button id="closePermission" type="button">关闭</button>
+    </header>
+    <button class="perm-option" type="button" data-mode="ask">
+      <span><strong>请求批准</strong><span>编辑外部文件和使用互联网时始终询问</span></span>
+      <b></b>
+    </button>
+    <button class="perm-option" type="button" data-mode="auto">
+      <span><strong>替我批准</strong><span>仅对检测到的风险操作请求批准</span></span>
+      <b></b>
+    </button>
+    <button class="perm-option active" type="button" data-mode="full">
+      <span><strong>完全访问权限</strong><span>可不受限制地访问互联网和当前工作区文件</span></span>
+      <b>✓</b>
+    </button>
+  </div>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+
+    const state = {
+      activeId: "task-1",
+      permission: "full",
+      file: null,
+      pending: null,
+      tasks: [
+        { id: "task-1", title: "新任务", scene: "待识别", status: "等待输入", updated: "刚刚", date: "2026-06-28", tokens: 0 },
+        { id: "task-2", title: "山东日前报价建议", scene: "报价建议", status: "已完成", updated: "11:15", date: "2026-06-28", tokens: 7780 },
+        { id: "task-3", title: "河南政策查询", scene: "政策查询", status: "已完成", updated: "09:30", date: "2026-06-28", tokens: 3120 }
+      ],
+      agents: [
+        ["Supervisor", "意图识别、信息补充、风险表达识别", 0],
+        ["Planner", "复杂长尾任务拆解；固定流程命中时不调用", 0],
+        ["Quant", "量化分析与预测解释", 0],
+        ["Expert", "经验匹配与案例分析", 0],
+        ["Compliance", "政策、规则与风险控制", 0],
+        ["Strategy", "策略生成与方案综合", 0],
+        ["Reflection", "反思检查与有限修订", 0],
+        ["Verifier", "交付前独立质量验证", 0]
+      ]
+    };
+
+    function activeTask() {
+      return state.tasks.find((task) => task.id === state.activeId);
+    }
+
+    function showView(name) {
+      document.querySelectorAll(".view").forEach((view) => view.classList.remove("active"));
+      $(name + "View").classList.add("active");
+      $("viewTitle").textContent = name === "agent" ? activeTask().title : { history: "历史任务", usage: "Token 用量" }[name];
+      document.querySelectorAll(".side-link").forEach((link) => link.classList.toggle("active", link.dataset.view === name));
+      if (name === "history") renderHistory();
+      if (name === "usage") renderUsage();
+    }
+
+    function renderThreads() {
+      $("threadList").innerHTML = `
+        <div class="section-label">今天</div>
+        ${state.tasks.map((task) => `
+          <button class="thread ${task.id === state.activeId ? "active" : ""}" type="button" data-id="${task.id}">
+            <div><strong>${task.title}</strong><span>${task.scene} · ${task.updated}</span></div>
+            ${pill(task.status)}
+          </button>
+        `).join("")}
+      `;
+      document.querySelectorAll(".thread").forEach((button) => {
+        button.onclick = () => {
+          state.activeId = button.dataset.id;
+          renderThreads();
+          showView("agent");
+        };
+      });
+    }
+
+    function renderHistory() {
+      const status = $("statusFilter").value;
+      const scene = $("sceneFilter").value;
+      const date = $("dateFilter").value;
+      const rows = state.tasks.filter((task) => (!status || task.status === status) && (!scene || task.scene === scene) && (!date || task.date === date));
+      $("historyRows").innerHTML = rows.map((task) => `
+        <div class="row">
+          <div><strong>${task.title}</strong><span>${task.date} · ${task.updated}</span></div>
+          <span>${task.scene}</span>
+          ${pill(task.status)}
+        </div>
+      `).join("") || `<div class="row"><div><strong>没有符合条件的任务</strong><span>调整筛选条件后再看。</span></div><span></span><span></span></div>`;
+    }
+
+    function renderUsage() {
+      const total = state.agents.reduce((sum, row) => sum + row[2], 0);
+      $("totalTokens").textContent = total.toLocaleString();
+      $("modelName").textContent = $("modelSelect").selectedOptions[0].textContent;
+      $("usageRows").innerHTML = state.agents.map((row) => `
+        <div class="row">
+          <div><strong>${row[0]}</strong><span>${row[1]}</span></div>
+          <span>${$("modelSelect").selectedOptions[0].textContent}</span>
+          <span class="pill">${row[2].toLocaleString()} Token</span>
+        </div>
+      `).join("");
+    }
+
+    function pill(status) {
+      const cls = status === "已完成" ? "ok" : status === "失败" ? "bad" : status === "等待补充" ? "hot" : "";
+      return `<span class="pill ${cls}">${status}</span>`;
+    }
+
+    function addMessage(who, html, plain = false) {
+      $("emptyState").classList.add("hidden");
+      const div = document.createElement("div");
+      div.className = `message ${who}`;
+      div.innerHTML = `<div class="msg-icon">${who === "user" ? "你" : "PM"}</div><div class="bubble ${plain ? "plain" : ""}">${html}</div>`;
+      $("messages").appendChild(div);
+      div.scrollIntoView({ behavior: "smooth", block: "end" });
+    }
+
+    function sendPrompt(event) {
+      event.preventDefault();
+      const text = $("prompt").value.trim();
+      if (!text) return $("prompt").focus();
+
+      addMessage("user", escapeHtml(text), true);
+      $("prompt").value = "";
+
+      if (state.pending) {
+        const original = state.pending.text;
+        state.pending = null;
+        addMessage("assistant", `已确认省份：${escapeHtml(text)}。原任务继续执行。`);
+        startTask(`${text} ${original}`);
+        return;
+      }
+
+      if (needsProvince(text)) {
+        const task = activeTask();
+        task.title = text.slice(0, 28);
+        task.scene = "报价建议";
+        task.status = "等待补充";
+        task.updated = "刚刚";
+        state.pending = { type: "province", text };
+        addMessage("assistant", "需要先确认省份。你要分析哪个省的报价策略？");
+        renderThreads();
+        return;
+      }
+
+      startTask(text);
+    }
+
+    function startTask(text) {
+      const task = activeTask();
+      task.title = text.slice(0, 28);
+      task.scene = detectScene(text);
+      task.status = "处理中";
+      task.updated = "刚刚";
+      state.agents = agentPlan(text);
+      $("send").disabled = true;
+      $("send").textContent = "…";
+      renderThreads();
+      showView("agent");
+      runTimeline(text);
+    }
+
+    function needsProvince(text) {
+      return /报价|策略|申报|交易/.test(text) && !/河南|山东|辽宁|北京|广东/.test(text);
+    }
+
+    function agentPlan(text) {
+      const quote = /报价|申报|交易|锁仓/.test(text);
+      const longTail = /规划|复杂|拆解|多个步骤/.test(text);
+      return [
+        ["Supervisor", "意图识别、信息补充、风险表达识别", 520],
+        ["Planner", "复杂长尾任务拆解；固定流程命中时不调用", longTail ? 740 : 0],
+        ["Quant", "量化分析与预测解释", quote ? 1120 : 0],
+        ["Expert", "经验匹配与案例分析", quote ? 860 : 0],
+        ["Compliance", "政策、规则与风险控制", quote ? 980 : 620],
+        ["Strategy", "策略生成与方案综合", /日报|建议|报告|策略|报价/.test(text) ? 1320 : 0],
+        ["Reflection", "反思检查与有限修订", quote ? 580 : 0],
+        ["Verifier", "交付前独立质量验证", 690]
+      ];
+    }
+
+    function runTimeline(text) {
+      const timeline = document.createElement("div");
+      timeline.className = "message";
+      timeline.innerHTML = `<div class="msg-icon">◎</div><div class="bubble"><div class="timeline"></div></div>`;
+      $("messages").appendChild(timeline);
+      const box = timeline.querySelector(".timeline");
+      const quote = /报价|申报|交易|锁仓/.test(text);
+      const steps = [
+        ["理解任务范围", "确认用户目标、业务范围和缺失信息。"],
+        ["检索资料", sourceCard()],
+        ["读取市场与预测数据", quote ? "电价、负荷、天气、历史案例和报价边界已形成可引用材料。" : "本任务不需要读取报价预测数据。"],
+        ["生成内容策略", "先给结论，再给依据、限制和可继续追问的问题。"],
+        ["Done", "证据链、权限、适用范围和输出用途检查完成。"]
+      ];
+      let done = 0;
+      const draw = () => {
+        box.innerHTML = steps.map((step, index) => `
+          <div class="step ${index <= done ? "done" : ""}">
+            <div class="step-dot">${index <= done ? "✓" : "·"}</div>
+            <div><b>${step[0]}</b><span>${step[1]}</span></div>
+          </div>
+        `).join("");
+      };
+      draw();
+      const timer = setInterval(() => {
+        done += 1;
+        draw();
+        if (done === steps.length - 1) {
+          clearInterval(timer);
+          finishTask(text);
+        }
+      }, 560);
+    }
+
+    function sourceCard() {
+      return `
+        <div class="source-card">
+          <div class="source-head"><span>证据候选</span><span>4 results</span></div>
+          <div class="source-row"><i>P</i><span>山东现货市场日前报价规则</span><em>policy.gov</em></div>
+          <div class="source-row"><i>M</i><span>日前负荷与电价预测批次</span><em>market-data</em></div>
+          <div class="source-row"><i>E</i><span>相似天气与历史报价案例</span><em>expert-base</em></div>
+          <div class="source-row"><i>C</i><span>客户合同边界与风险限额</span><em>contract-db</em></div>
+        </div>
+      `;
+    }
+
+    function finishTask(text) {
+      const task = activeTask();
+      const total = state.agents.reduce((sum, row) => sum + row[2], 0);
+      task.status = "已完成";
+      task.tokens = total;
+      addMessage("assistant", `
+        <b>输出结果</b>
+        <ul>
+          <li>${/报价|申报|交易|锁仓/.test(text) ? "已生成报价策略内容；当前原型只输出内容，不执行交易、申报或设备控制。" : "已完成分析，可作为业务材料继续追问。"}</li>
+          <li>关键依据：政策条款、市场数据、预测结果、历史相似日。</li>
+          <li>限制：预测不是事实，结果需要保留引用来源和适用范围。</li>
+        </ul>
+        <p><button type="button" onclick="downloadResult()">下载结果</button></p>
+      `);
+      $("send").disabled = false;
+      $("send").textContent = "↑";
+      renderThreads();
+      renderUsage();
+    }
+
+    function detectScene(text) {
+      if (/报价|申报|交易/.test(text)) return "报价建议";
+      if (/市场|日报/.test(text)) return "市场日报";
+      return "政策查询";
+    }
+
+    function setFile(file) {
+      if (!file) return;
+      const failed = /fail|error|失败|错误/i.test(file.name);
+      state.file = {
+        name: file.name,
+        size: file.size,
+        status: failed ? "解析失败" : "解析成功"
+      };
+      renderFile();
+    }
+
+    function renderFile() {
+      const chip = $("fileChip");
+      if (!state.file) {
+        chip.classList.remove("show");
+        $("fileInput").value = "";
+        return;
+      }
+      chip.classList.add("show");
+      $("fileChipName").textContent = state.file.name;
+      $("fileChipMeta").textContent = `${formatSize(state.file.size)} · ${state.file.status}`;
+      const failed = state.file.status === "解析失败";
+      $("retryFile").classList.toggle("hidden", !failed);
+      $("continueNoFile").classList.toggle("hidden", !failed);
+    }
+
+    function removeFile() {
+      state.file = null;
+      renderFile();
+    }
+
+    function formatSize(size) {
+      if (size < 1024) return `${size} B`;
+      if (size < 1024 * 1024) return `${(size / 1024).toFixed(1)} KB`;
+      return `${(size / 1024 / 1024).toFixed(1)} MB`;
+    }
+
+    function downloadResult() {
+      const task = activeTask();
+      const blob = new Blob([`${task.title}\n${task.scene}\n${task.status}`], { type: "text/plain;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "powermind-result.txt";
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function escapeHtml(value) {
+      const div = document.createElement("div");
+      div.textContent = value;
+      return div.innerHTML;
+    }
+
+    function setPermission(mode) {
+      state.permission = mode;
+      const labels = { ask: "请求批准", auto: "替我批准", full: "完全访问" };
+      $("permissionButton").textContent = labels[mode];
+      document.querySelectorAll(".perm-option").forEach((button) => {
+        const active = button.dataset.mode === mode;
+        button.classList.toggle("active", active);
+        button.querySelector("b").textContent = active ? "✓" : "";
+      });
+    }
+
+    function showAuth() {
+      $("appView").classList.add("hidden");
+      $("authView").classList.remove("hidden");
+    }
+
+    function showApp(account) {
+      $("authView").classList.add("hidden");
+      $("appView").classList.remove("hidden");
+      $("accountEmail").textContent = account;
+      $("accountName").textContent = account.split("@")[0] || "whisper";
+      $("prompt").focus();
+    }
+
+    $("loginForm").onsubmit = (event) => {
+      event.preventDefault();
+      const account = $("loginAccount").value.trim();
+      const password = $("loginPassword").value;
+      $("loginMessage").classList.remove("ok");
+      if (/停用|disabled|未启用/i.test(account)) {
+        $("loginMessage").textContent = "账号不可用";
+        return;
+      }
+      if (!account || password.length < 4) {
+        $("loginMessage").textContent = "登录失败";
+        return;
+      }
+      showApp(account);
+    };
+
+    $("applyForm").onsubmit = (event) => {
+      event.preventDefault();
+      $("applyMessage").classList.add("ok");
+      $("applyMessage").textContent = "申请已提交，管理员启用后才能登录。";
+      event.target.reset();
+    };
+
+    $("newTask").onclick = () => {
+      const id = "task-" + Date.now();
+      state.tasks.unshift({ id, title: "新任务", scene: "待识别", status: "等待输入", updated: "刚刚", date: "2026-06-28", tokens: 0 });
+      state.activeId = id;
+      state.pending = null;
+      $("messages").innerHTML = "";
+      $("emptyState").classList.remove("hidden");
+      renderThreads();
+      showView("agent");
+      $("prompt").focus();
+    };
+
+    $("composer").onsubmit = sendPrompt;
+    $("pickFile").onclick = () => $("fileInput").click();
+    $("fileInput").onchange = (event) => setFile(event.target.files[0]);
+    $("removeFile").onclick = removeFile;
+    $("retryFile").onclick = () => $("fileInput").click();
+    $("continueNoFile").onclick = removeFile;
+    $("modelSelect").onchange = renderUsage;
+    $("dateFilter").onchange = renderHistory;
+    $("statusFilter").onchange = renderHistory;
+    $("sceneFilter").onchange = renderHistory;
+    $("usageDate").onchange = renderUsage;
+    $("usageScope").onchange = renderUsage;
+    $("permissionButton").onclick = () => $("permissionPop").classList.toggle("hidden");
+    $("closePermission").onclick = () => $("permissionPop").classList.add("hidden");
+    $("logoutButton").onclick = showAuth;
+    $("applyShortcut").onclick = showAuth;
+    document.querySelectorAll(".perm-option").forEach((button) => {
+      button.onclick = () => setPermission(button.dataset.mode);
+    });
+    document.querySelectorAll(".side-link").forEach((button) => {
+      button.onclick = () => showView(button.dataset.view);
+    });
+
+    // ponytail: 单文件原型；接后端时只替换 state 和 sendPrompt。
+    renderThreads();
+    renderHistory();
+    renderUsage();
+    setPermission("full");
+  </script>
+</body>
+</html>

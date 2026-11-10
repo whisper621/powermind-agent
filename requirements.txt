@@ -1,0 +1,36 @@
+# PowerMind — Python dependencies
+# =============================================================================
+# Install:  pip install -r requirements.txt
+# =============================================================================
+
+# ── LangGraph & LangChain (core orchestration) ─────────────────────────────
+langgraph>=0.2.0
+langchain-core>=0.3.0
+langchain-deepseek>=0.1.0
+
+# ── Chainlit (frontend) ────────────────────────────────────────────────────
+chainlit>=1.0.0
+
+# ── Vector DB & Retrieval ──────────────────────────────────────────────────
+chromadb>=0.5.0
+
+# ── Data & Serialisation ──────────────────────────────────────────────────
+pydantic>=2.0.0
+pyyaml>=6.0
+
+# ── Numeric & ML (demo LSTM plugin) ────────────────────────────────────────
+torch>=2.0.0
+numpy>=1.24.0
+
+# ── Utilities ──────────────────────────────────────────────────────────────
+python-dotenv>=1.0.0
+
+# ── Testing ────────────────────────────────────────────────────────────────
+pytest>=8.0.0
+
+# ── Optional: PostgreSQL (for V1 production) ───────────────────────────────
+# asyncpg>=0.29.0
+# sqlalchemy[asyncio]>=2.0.0
+
+# ── Optional: Redis (for V1 production) ────────────────────────────────────
+# redis>=5.0.0

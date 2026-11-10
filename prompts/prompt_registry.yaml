@@ -1,0 +1,161 @@
+# PowerMind — Prompt Registry
+# =============================================================================
+# Maps prompt_id → file + metadata.
+# Generated: 2026-06-24  |  Maintainer: PowerMind team
+# =============================================================================
+
+prompts:
+  - prompt_id: "quant_system"
+    file: "prompts/agents/quant.txt"
+    version: "1.0.0"
+    owner: "quant-agent"
+    status: "active"
+    used_by: ["quant_node"]
+
+  - prompt_id: "compliance_system"
+    file: "prompts/agents/compliance.txt"
+    version: "1.0.0"
+    owner: "compliance-agent"
+    status: "active"
+    used_by: ["compliance_node"]
+
+  - prompt_id: "strategy_system"
+    file: "prompts/agents/strategy.txt"
+    version: "2.2.0"
+    owner: "strategy-agent"
+    status: "active"
+    used_by: ["strategy_node"]
+
+  - prompt_id: "expert_system"
+    file: "prompts/agents/expert.txt"
+    version: "1.0.0"
+    owner: "expert-agent"
+    status: "active"
+    used_by: ["expert_insight_node"]
+
+  - prompt_id: "supervisor_system"
+    file: "prompts/agents/supervisor.txt"
+    version: "1.1.0"
+    owner: "supervisor"
+    status: "active"
+    used_by: ["supervisor_node"]
+
+  - prompt_id: "planner_system"
+    file: "prompts/agents/planner.txt"
+    version: "1.0.0"
+    owner: "planner"
+    status: "active"
+    used_by: ["planner_node", "plan_validator"]
+
+  - prompt_id: "reflection_system"
+    file: "prompts/agents/reflection.txt"
+    version: "2.2.0"
+    owner: "reflection"
+    status: "active"
+    used_by: ["reflection_node"]
+
+  - prompt_id: "verifier_system"
+    file: "prompts/agents/verifier.txt"
+    version: "1.0.0"
+    owner: "verifier"
+    status: "active"
+    used_by: ["verifier_node"]
+
+  - prompt_id: "component_runtime_rules"
+    file: "prompts/components/runtime_rules.txt"
+    version: "2.0.0"
+    owner: "platform"
+    status: "active"
+    used_by: ["context_assembly", "demo_rag", "evidence_pipeline", "render_result"]
+
+  - prompt_id: "daily_pulse_scenario"
+    file: "prompts/scenarios/daily_briefing.txt"
+    version: "1.0.0"
+    owner: "product"
+    status: "active"
+    used_by: ["strategy_node"]
+
+  - prompt_id: "bidding_advice_scenario"
+    file: "prompts/scenarios/bidding_advice.txt"
+    version: "2.3.0"
+    owner: "product"
+    status: "active"
+    used_by: ["strategy_node"]
+
+  - prompt_id: "policy_search_scenario"
+    file: "prompts/scenarios/policy_search.txt"
+    version: "1.0.0"
+    owner: "product"
+    status: "active"
+    used_by: ["compliance_node", "render_result"]
+
+  - prompt_id: "long_term_locking_scenario"
+    file: "prompts/scenarios/long_term_locking.txt"
+    version: "2.1.0"
+    owner: "product"
+    status: "active"
+    used_by: ["strategy_node"]
+
+  - prompt_id: "real_time_alert_scenario"
+    file: "prompts/scenarios/real_time_alert.txt"
+    version: "1.1.0"
+    owner: "product"
+    status: "active"
+    used_by: ["strategy_node"]
+
+  - prompt_id: "bidding_sheet_template"
+    file: "prompts/templates/bidding_sheet.md"
+    version: "1.0.0"
+    owner: "strategy-agent"
+    status: "active"
+    used_by: ["strategy_node"]
+
+  - prompt_id: "graph_quality_template"
+    file: "prompts/templates/graph_quality.md"
+    version: "1.0.0"
+    owner: "render_result"
+    status: "active"
+    used_by: ["render_result"]
+
+  - prompt_id: "daily_briefing_template"
+    file: "prompts/templates/daily_briefing.md"
+    version: "1.0.0"
+    owner: "strategy-agent"
+    status: "active"
+    used_by: ["strategy_node"]
+
+  - prompt_id: "report_template_market"
+    file: "prompts/templates/report_template_market_analysis.md"
+    version: "1.0.0"
+    owner: "client-report"
+    status: "active"
+    used_by: ["generate_client_strategy_report"]
+
+  - prompt_id: "unified_result_template"
+    file: "prompts/templates/unified_result.md"
+    version: "1.0.0"
+    owner: "render_result"
+    status: "active"
+    used_by: ["render_result"]
+
+  - prompt_id: "policy_query_template"
+    file: "prompts/templates/policy_query.md"
+    version: "1.0.0"
+    owner: "render-result"
+    status: "active"
+    used_by: ["render_result"]
+
+  - prompt_id: "long_term_locking_template"
+    file: "prompts/templates/long_term_locking.md"
+    version: "1.0.0"
+    owner: "render-result"
+    status: "active"
+    used_by: ["render_result"]
+
+  # ── Archived / deprecated ──
+  - prompt_id: "orchestrator_quality"
+    file: "docs/archive/orchestrator_quality.md"
+    version: "1.0.0"
+    owner: "archive"
+    status: "archived"
+    used_by: []

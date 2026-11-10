@@ -1,0 +1,105 @@
+# PowerMind — Task intent library
+# =============================================================================
+# Maps user intent keywords → workflow + tool scope.
+# Used by app_chainlit.py (or a future intent router) to select the correct
+# fixed workflow without hardcoding business logic in the frontend.
+# =============================================================================
+
+intents:
+  - intent_id: "daily_pulse"
+    name: "Market daily briefing"
+    keywords:
+      - "晨报"
+      - "日报"
+      - "今天"
+      - "今日"
+      - "市场情况"
+      - "daily"
+      - "market report"
+      - "market analysis"
+    workflow_id: "daily_pulse"
+    tool_scope: ["quant", "expert", "compliance", "strategy"]
+    slots:
+      province: optional
+      date: optional
+    status: "active"
+
+  - intent_id: "bidding_advice"
+    name: "Bidding & pricing advice"
+    keywords:
+      - "申报"
+      - "报价"
+      - "投标"
+      - "日前"
+      - "bidding"
+      - "pricing"
+    workflow_id: "bidding_advice"
+    tool_scope: ["quant", "expert", "compliance", "strategy"]
+    slots:
+      province: required
+      date: required
+    status: "active"
+
+  - intent_id: "real_time_alert"
+    name: "Real-time trading & intraday adjustment"
+    keywords:
+      - "实时"
+      - "日内"
+      - "补仓"
+      - "减仓"
+      - "预警"
+      - "监盘"
+      - "realtime"
+      - "alert"
+    workflow_id: "real_time_alert"
+    tool_scope: ["quant", "expert", "compliance", "strategy"]
+    slots:
+      province: required
+      date: optional
+    status: "active"
+
+  - intent_id: "long_term_locking"
+    name: "Long-term contract locking"
+    keywords:
+      - "中长期"
+      - "锁价"
+      - "合约"
+      - "撮合"
+      - "long term"
+      - "lock"
+    workflow_id: "long_term_locking"
+    tool_scope: ["quant", "expert", "compliance", "strategy"]
+    slots:
+      province: required
+      date: required
+    status: "active"
+
+  - intent_id: "policy_search"
+    name: "Policy & regulation search"
+    keywords:
+      - "政策"
+      - "规则"
+      - "合规"
+      - "偏差"
+      - "policy"
+      - "regulation"
+      - "compliance"
+    workflow_id: "policy_search"
+    tool_scope: ["quant", "compliance"]
+    slots:
+      province: required
+      date: optional
+    status: "active"
+
+  - intent_id: "general"
+    name: "General query"
+    keywords:
+      - "分析"
+      - "分析一下"
+      - "帮助"
+    workflow_id: null          # Falls back to planner
+    tool_scope: []
+    slots:
+      province: optional
+      date: optional
+    status: "active"

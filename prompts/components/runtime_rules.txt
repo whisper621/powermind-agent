@@ -1,0 +1,22 @@
+# PowerMind V1 组件运行规则
+
+## Context Assembly
+只从 `powermind_demo.db` 读取目标省份、日期的历史电价、天气、存储预测、持仓和预制场景。无数据必须显式失败；每个数据块生成可追溯 evidence_id。
+
+## SQLite RAG
+先按省份和文档类型过滤，再按用户问题与 keywords/title/content 的命中数排序。不得把未召回内容、行业常识或 Agent 输出伪装成政策事实。
+
+## Agent Runner
+市场、政策、案例和策略数字只能来自 SQLite 演示数据。配置 DeepSeek 时，LLM 仅用于整理公开分析和表达，不得联网补充事实、调用预测算法或访问正式交易接口；调用失败必须透明降级为数据库规则结果。Prompt 资产必须从 `prompt_registry.yaml` 加载并记录 prompt_id/version。
+
+## 数据披露
+输出必须标注数据类型、时间范围、覆盖点数、单位、缺失项和生成时间。数据库快照不得称为实时行情；存储预测不得写成已发生事实；趋势推断不得伪造数值。
+
+## EvidencePipeline
+汇总 Context、Quant、Expert、Compliance、Strategy 的 evidence，按 evidence_id 去重。缺失来源定位符或验证状态的证据不得计为已验证；Agent 文字本身不是证据。
+
+## Compliance Gate
+PASS/ALLOWED 才可继续；FAIL/PROHIBITED 必须停止；资料不足进入补证或人工复核。
+
+## Render
+最终结果先展示业务结论，再展示数据覆盖、关键依据、方案/备选方案、风险与停止条件、人工确认边界。执行轨迹、公开分析摘要、证据链和验证结果放在可展开详情中，不展示模型隐藏思维链。

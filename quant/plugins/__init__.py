@@ -1,0 +1,1 @@
+"""PowerMind — forecast plugin implementations."""

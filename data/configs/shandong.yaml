@@ -1,0 +1,66 @@
+# 山东电力市场配置
+province:
+  name: 山东
+  code: shandong
+  region: 华北
+  market_stage: SPOT   # SPOT | HYBRID | PLAN
+
+# 现货市场规则
+spot_market:
+  price_cap: 1500        # 申报上限 元/MWh
+  price_floor: 0         # 申报下限 元/MWh
+  settlement_cap: 1500   # 结算上限
+  settlement_floor: 0    # 结算下限
+  bidding_deadline: "10:00"  # 日前申报截止时间
+
+# 偏差考核
+deviation:
+  free_range: 5.0        # 免考核范围 ±5%
+  penalty_multiplier: 2.0  # 超范围惩罚倍数
+  exemption_reasons:
+    - 电网故障
+    - 极端天气预警
+    - 政府指令性限电
+    - 不可抗力
+
+# 分时电价 (TOU)
+tou:
+  segments:
+    - name: 尖峰
+      hours: ["10:00-12:00", "19:00-21:00"]
+      multiplier: 1.8
+    - name: 高峰
+      hours: ["08:00-10:00", "14:00-19:00", "21:00-22:00"]
+      multiplier: 1.5
+    - name: 平段
+      hours: ["06:00-08:00", "12:00-14:00", "22:00-24:00"]
+      multiplier: 1.0
+    - name: 低谷
+      hours: ["00:00-06:00"]
+      multiplier: 0.5
+    - name: 深谷
+      hours: []
+      multiplier: 0.3
+
+# 能源结构
+energy_mix:
+  thermal: 60.0      # 火电 %
+  wind: 15.0         # 风电 %
+  solar: 12.0        # 光伏 %
+  nuclear: 5.0       # 核电 %
+  hydro: 3.0         # 水电 %
+  other: 5.0         # 其他 %
+
+# 主要输电通道
+transmission:
+  - 上海庙-山东(±800kV) 内蒙煤电
+  - 锡盟-山东(特高压交流) 蒙东电力
+  - 扎鲁特-青州(±800kV) 东北电力
+  - 榆横-潍坊(±800kV) 陕北煤电
+
+# 数据源
+data_sources:
+  - name: 山东电力交易中心
+    url: https://sdb.nea.gov.cn
+  - name: 山东能监办
+    url: https://sdb.nea.gov.cn/dtyw/tzgg/

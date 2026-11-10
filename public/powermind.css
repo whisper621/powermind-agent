@@ -1,0 +1,50 @@
+:root {
+  --powermind-navy: #081d35;
+  --powermind-blue: #1677ff;
+  --powermind-cyan: #16c7c9;
+}
+
+body {
+  background:
+    radial-gradient(circle at 8% 0%, rgba(22, 119, 255, .10), transparent 30rem),
+    radial-gradient(circle at 92% 12%, rgba(22, 199, 201, .08), transparent 26rem);
+}
+
+#root header {
+  border-bottom: 1px solid rgba(22, 119, 255, .14);
+  backdrop-filter: blur(14px);
+}
+
+.prose h1, .prose h2, .prose h3 {
+  color: inherit !important;
+  letter-spacing: -.015em;
+}
+
+.prose h2 {
+  margin-top: 1.8rem;
+  padding-bottom: .45rem;
+  border-bottom: 1px solid rgba(22, 119, 255, .18);
+}
+
+.prose table {
+  display: table;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 12px;
+  box-shadow: 0 8px 28px rgba(8, 29, 53, .06);
+}
+
+.prose thead {
+  background: linear-gradient(90deg, rgba(22, 119, 255, .10), rgba(22, 199, 201, .08));
+}
+
+.prose blockquote {
+  border-left-color: var(--powermind-cyan);
+  border-radius: 0 10px 10px 0;
+  background: rgba(22, 199, 201, .06);
+  padding: .8rem 1rem;
+}
+
+textarea {
+  border-radius: 16px !important;
+}
